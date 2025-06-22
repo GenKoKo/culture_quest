@@ -1,6 +1,18 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import {
+  registerUser,
+  verifyEmail,
+  loginUser,
+  logoutUser,
+  authenticateToken,
+  getCurrentUser,
+  updateUserProfile,
+  avatarUploadMiddleware, // Import middleware
+  handleAvatarUpload,     // Import handler
+  type AuthenticatedRequest
+} from "./auth";
 import { z } from "zod";
 import type { QuizResult } from "@shared/schema";
 
@@ -186,6 +198,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch achievements" });
     }
   });
+
+  // Auth routes
+  app.post("/api/auth/register", registerUser);
+  app.post("/api/auth/verify-email", verifyEmail);
+  app.post("/api/auth/login", loginUser);
+  app.post("/api/auth/logout", authenticateToken, logoutUser); // Logout might not need auth if just clearing client token
+
+  // User routes (protected)
+  app.get("/api/auth/me", authenticateToken, getCurrentUser);
+  app.put("/api/user/profile", authenticateToken, (req: Request, res) => updateUserProfile(req as AuthenticatedRequest, res));
+  app.post(
+    "/api/user/avatar",
+    authenticateToken,
+    avatarUploadMiddleware, // Multer middleware for parsing 'avatar' field
+    (req: Request, res) => handleAvatarUpload(req as AuthenticatedRequest, res) // Actual handler
+  );
 
   const httpServer = createServer(app);
 

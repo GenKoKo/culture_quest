@@ -1,10 +1,18 @@
 import express, { type Request, Response, NextFunction } from "express";
+import path from "path"; // Import path
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// Serve static files from server/public (e.g., uploaded avatars)
+// This should come before body parsers if there's any chance of conflict,
+// but generally fine here.
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 
 app.use((req, res, next) => {
   const start = Date.now();

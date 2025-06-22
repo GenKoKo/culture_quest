@@ -48,7 +48,7 @@ export default function CultureCard({ culture }: CultureCardProps) {
 
   return (
     <Card 
-      className="culture-card group bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md cursor-pointer"
+      className="culture-card group bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-md dark:hover:shadow-slate-700/50 cursor-pointer"
       onClick={handleClick}
     >
       <div className="h-48 relative overflow-hidden">
@@ -57,13 +57,14 @@ export default function CultureCard({ culture }: CultureCardProps) {
           alt={`${culture.name} culture`}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-          <span className="text-sm font-medium text-gray-900">
+        <div className="absolute inset-0 bg-black/20 dark:bg-black/40"></div>
+        <div className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm px-3 py-1 rounded-full">
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
             {culture.flag} {culture.country}
           </span>
         </div>
-        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
+        {/* Assuming colorClass text (e.g. text-cultural-red) has enough contrast on dark background or is adjusted via its own definition if needed */}
+        <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm px-3 py-1 rounded-full">
           <span className={`text-sm font-medium text-${colorClass}`}>
             {culture.progress.questionsCompleted}/{culture.progress.totalQuestions} Complete
           </span>
@@ -71,23 +72,24 @@ export default function CultureCard({ culture }: CultureCardProps) {
       </div>
       
       <div className="p-6">
-        <h4 className="text-lg font-semibold text-gray-900 mb-2">{culture.name} Culture</h4>
-        <p className="text-gray-600 text-sm mb-4">{culture.description}</p>
+        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{culture.name} Culture</h4>
+        <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{culture.description}</p>
         
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center space-x-1">
-            <Star className="text-accent w-4 h-4" />
-            <span className="text-sm font-medium">{culture.progress.bestScore} pts</span>
+            <Star className="text-accent w-4 h-4" /> {/* text-accent should use CSS vars for dark mode */}
+            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{culture.progress.bestScore} pts</span>
           </div>
           <div className="flex items-center space-x-1">
-            <Clock className="text-gray-400 w-4 h-4" />
-            <span className="text-sm text-gray-500">~{culture.estimatedTime} min</span>
+            <Clock className="text-gray-400 dark:text-gray-500 w-4 h-4" />
+            <span className="text-sm text-gray-500 dark:text-gray-400">~{culture.estimatedTime} min</span>
           </div>
         </div>
         
+        {/* Progress component should handle its own dark theming via shadcn/ui conventions */}
         <Progress value={culture.progress.progressPercent} className="mb-3" />
         
-        <div className="flex justify-between text-xs text-gray-500">
+        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
           <span>Beginner</span>
           <span>{culture.progress.level}</span>
           <span>Expert</span>
