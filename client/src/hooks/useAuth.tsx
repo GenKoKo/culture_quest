@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '@/shared/schema'; // Assuming User type is exported from schema
+import { User } from '@shared/schema';
 
 const AUTH_TOKEN_KEY = 'cultural-quest-auth-token';
 

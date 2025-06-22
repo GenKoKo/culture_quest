@@ -25,7 +25,7 @@ export default function ProfilePage() {
     }
   }, [user]);
 
-  const getAvatarFallback = ()_getAvatarFallback = () => {
+  const getAvatarFallback = () => {
     if (!user) return "CQ"; // Cultural Quest default
     return (user.displayName || user.email)?.[0]?.toUpperCase() || "U";
   };
