@@ -51,7 +51,7 @@ export const userAchievements = pgTable("user_achievements", {
 });
 
 export const gameStats = pgTable("game_stats", {
-  id: serial("id").primaryKey().default(1),
+  id: serial("id").primaryKey(),
   totalScore: integer("total_score").notNull().default(0),
   level: integer("level").notNull().default(1),
   culturesExplored: integer("cultures_explored").notNull().default(0),

@@ -5,6 +5,8 @@ import {
   type InsertUserProgress, type InsertAchievement, type InsertUserAchievement,
   type InsertGameStats, type QuizSession, type QuizResult
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   // Cultures
@@ -536,4 +538,218 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// DatabaseStorage implementation
+export class DatabaseStorage implements IStorage {
+  async getCultures(): Promise<Culture[]> {
+    return await db.select().from(cultures);
+  }
+
+  async getCulture(id: number): Promise<Culture | undefined> {
+    const [culture] = await db.select().from(cultures).where(eq(cultures.id, id));
+    return culture || undefined;
+  }
+
+  async createCulture(insertCulture: InsertCulture): Promise<Culture> {
+    const [culture] = await db
+      .insert(cultures)
+      .values(insertCulture)
+      .returning();
+    return culture;
+  }
+
+  async getQuestionsByCulture(cultureId: number): Promise<Question[]> {
+    return await db.select().from(questions).where(eq(questions.cultureId, cultureId));
+  }
+
+  async getRandomQuestions(cultureId: number, count: number): Promise<Question[]> {
+    const allQuestions = await this.getQuestionsByCulture(cultureId);
+    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, Math.min(count, shuffled.length));
+  }
+
+  async createQuestion(insertQuestion: InsertQuestion): Promise<Question> {
+    const [question] = await db
+      .insert(questions)
+      .values(insertQuestion)
+      .returning();
+    return question;
+  }
+
+  async getUserProgress(): Promise<UserProgress[]> {
+    return await db.select().from(userProgress);
+  }
+
+  async getUserProgressByCulture(cultureId: number): Promise<UserProgress | undefined> {
+    const [progress] = await db.select().from(userProgress).where(eq(userProgress.cultureId, cultureId));
+    return progress || undefined;
+  }
+
+  async updateUserProgress(cultureId: number, progress: Partial<InsertUserProgress>): Promise<UserProgress> {
+    const existing = await this.getUserProgressByCulture(cultureId);
+    
+    if (existing) {
+      const [updated] = await db
+        .update(userProgress)
+        .set(progress)
+        .where(eq(userProgress.cultureId, cultureId))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(userProgress)
+        .values({ cultureId, ...progress } as InsertUserProgress)
+        .returning();
+      return created;
+    }
+  }
+
+  async getAchievements(): Promise<Achievement[]> {
+    return await db.select().from(achievements);
+  }
+
+  async getUserAchievements(): Promise<UserAchievement[]> {
+    return await db.select().from(userAchievements);
+  }
+
+  async unlockAchievement(achievementId: number): Promise<UserAchievement> {
+    const [userAchievement] = await db
+      .insert(userAchievements)
+      .values({
+        achievementId,
+        unlockedAt: new Date().toISOString()
+      })
+      .returning();
+    return userAchievement;
+  }
+
+  async checkAchievements(stats: GameStats, progress: UserProgress[]): Promise<Achievement[]> {
+    const allAchievements = await this.getAchievements();
+    const unlockedAchievements = await this.getUserAchievements();
+    const unlockedIds = new Set(unlockedAchievements.map(ua => ua.achievementId));
+    
+    const newAchievements: Achievement[] = [];
+    
+    for (const achievement of allAchievements) {
+      if (unlockedIds.has(achievement.id)) continue;
+      
+      let shouldUnlock = false;
+      switch (achievement.requirement) {
+        case "complete_first_challenge":
+          shouldUnlock = stats.challengesCompleted >= 1;
+          break;
+        case "perfect_score":
+          shouldUnlock = progress.some(p => p.bestScore >= 800);
+          break;
+        case "complete_culture":
+          shouldUnlock = progress.some(p => p.questionsCompleted >= 8);
+          break;
+        case "explore_5_cultures":
+          shouldUnlock = stats.culturesExplored >= 5;
+          break;
+        case "speed_completion":
+          break;
+      }
+      
+      if (shouldUnlock) {
+        newAchievements.push(achievement);
+        await this.unlockAchievement(achievement.id);
+      }
+    }
+    
+    return newAchievements;
+  }
+
+  async getGameStats(): Promise<GameStats> {
+    const [stats] = await db.select().from(gameStats);
+    return stats || {
+      id: 1,
+      totalScore: 0,
+      level: 1,
+      culturesExplored: 0,
+      challengesCompleted: 0,
+      accuracy: 0,
+      streak: 0
+    };
+  }
+
+  async updateGameStats(stats: Partial<InsertGameStats>): Promise<GameStats> {
+    const existing = await this.getGameStats();
+    
+    if (existing.id) {
+      const [updated] = await db
+        .update(gameStats)
+        .set(stats)
+        .where(eq(gameStats.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(gameStats)
+        .values({ id: 1, ...stats } as InsertGameStats)
+        .returning();
+      return created;
+    }
+  }
+
+  async submitQuizResult(result: QuizResult & { cultureId: number }): Promise<{
+    updatedProgress: UserProgress;
+    updatedStats: GameStats;
+    newAchievements: Achievement[];
+  }> {
+    const { cultureId, correctAnswers, totalQuestions, pointsEarned, timeSpent } = result;
+    
+    // Update user progress
+    const existingProgress = await this.getUserProgressByCulture(cultureId);
+    const newQuestionsCompleted = Math.max(
+      existingProgress?.questionsCompleted || 0,
+      correctAnswers
+    );
+    const newBestScore = Math.max(
+      existingProgress?.bestScore || 0,
+      pointsEarned
+    );
+    
+    const updatedProgress = await this.updateUserProgress(cultureId, {
+      questionsCompleted: newQuestionsCompleted,
+      bestScore: newBestScore,
+      totalPoints: (existingProgress?.totalPoints || 0) + pointsEarned,
+      level: this.calculateLevel(newQuestionsCompleted),
+      lastPlayed: new Date().toISOString()
+    });
+    
+    // Update game stats
+    const currentStats = await this.getGameStats();
+    const allProgress = await this.getUserProgress();
+    const exploredCultures = new Set(allProgress.filter(p => p.questionsCompleted > 0).map(p => p.cultureId)).size;
+    
+    const updatedStats = await this.updateGameStats({
+      totalScore: currentStats.totalScore + pointsEarned,
+      level: Math.floor(currentStats.totalScore / 1000) + 1,
+      culturesExplored: exploredCultures,
+      challengesCompleted: currentStats.challengesCompleted + 1,
+      accuracy: Math.round(
+        (allProgress.reduce((sum, p) => sum + p.bestScore, 0) / 
+         Math.max(allProgress.length * 800, 1)) * 100
+      ),
+      streak: currentStats.streak + (correctAnswers === totalQuestions ? 1 : 0)
+    });
+    
+    // Check for new achievements
+    const newAchievements = await this.checkAchievements(updatedStats, allProgress);
+    
+    return {
+      updatedProgress,
+      updatedStats,
+      newAchievements
+    };
+  }
+
+  private calculateLevel(questionsCompleted: number): string {
+    if (questionsCompleted >= 8) return "Expert";
+    if (questionsCompleted >= 6) return "Advanced";
+    if (questionsCompleted >= 3) return "Intermediate";
+    return "Beginner";
+  }
+}
+
+export const storage = new DatabaseStorage();
