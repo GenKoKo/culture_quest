@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(60, 9.1%, 97.8%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(247, 84%, 63%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(158, 64%, 52%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(44, 96%, 51%);
+  --accent-foreground: hsl(26, 83%, 14%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* Cultural colors */
+  --cultural-red: hsl(0, 73%, 48%);
+  --cultural-blue: hsl(217, 91%, 60%);
+  --cultural-orange: hsl(20, 90%, 48%);
+  --cultural-purple: hsl(258, 90%, 66%);
+  --cultural-teal: hsl(173, 58%, 39%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(247, 84%, 63%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-gray-50 text-foreground;
+  }
+}
+
+@layer utilities {
+  .animate-bounce-gentle {
+    animation: bounce 1s ease-in-out 2;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+/* Custom cultural color classes */
+.text-cultural-red {
+  color: hsl(0, 73%, 48%);
+}
+
+.bg-cultural-red {
+  background-color: hsl(0, 73%, 48%);
+}
+
+.border-cultural-red {
+  border-color: hsl(0, 73%, 48%);
+}
+
+.text-cultural-orange {
+  color: hsl(20, 90%, 48%);
+}
+
+.bg-cultural-orange {
+  background-color: hsl(20, 90%, 48%);
+}
+
+.text-cultural-purple {
+  color: hsl(258, 90%, 66%);
+}
+
+.bg-cultural-purple {
+  background-color: hsl(258, 90%, 66%);
+}
+
+.text-cultural-teal {
+  color: hsl(173, 58%, 39%);
+}
+
+.bg-cultural-teal {
+  background-color: hsl(173, 58%, 39%);
+}
+
+/* Interactive element hover effects */
+.culture-card {
+  transition: all 0.3s ease;
+}
+
+.culture-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.quiz-option {
+  transition: all 0.2s ease;
+}
+
+.quiz-option:hover {
+  border-color: hsl(247, 84%, 63%);
+  background-color: hsl(247, 84%, 97%);
+}
+
+.quiz-option.selected {
+  border-color: hsl(247, 84%, 63%);
+  background-color: hsl(247, 84%, 97%);
+}
+
+.quiz-option.selected .option-indicator {
+  border-color: hsl(247, 84%, 63%);
+  background-color: hsl(247, 84%, 63%);
+}
