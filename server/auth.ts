@@ -94,6 +94,7 @@ export async function registerUser(req: Request, res: Response) {
     const passwordHash = await bcrypt.hash(password, 10);
     const verificationCode = generateVerificationCode();
 
+    const now = new Date().toISOString();
     const newUser = await db
       .insert(users)
       .values({
@@ -101,6 +102,8 @@ export async function registerUser(req: Request, res: Response) {
         passwordHash,
         emailVerificationCode: verificationCode,
         displayName: displayName || email.split("@")[0], // Default display name
+        createdAt: now,
+        updatedAt: now,
       })
       .returning();
 

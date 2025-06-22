@@ -60,7 +60,7 @@
   }
 
   body {
-    @apply font-sans antialiased bg-gray-50 text-foreground;
+    @apply font-sans antialiased bg-gray-50 dark:bg-gray-900 text-foreground;
   }
 }
 
@@ -130,9 +130,19 @@
   background-color: hsl(247, 84%, 97%);
 }
 
+.dark .quiz-option:hover {
+  border-color: hsl(247, 84%, 63%);
+  background-color: hsl(247, 20%, 15%);
+}
+
 .quiz-option.selected {
   border-color: hsl(247, 84%, 63%);
   background-color: hsl(247, 84%, 97%);
+}
+
+.dark .quiz-option.selected {
+  border-color: hsl(247, 84%, 63%);
+  background-color: hsl(247, 20%, 15%);
 }
 
 .quiz-option.selected .option-indicator {
