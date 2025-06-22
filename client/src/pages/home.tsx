@@ -190,14 +190,12 @@ export default function Home() {
           </div>
         </div>
       </header>
-
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         initialView={authModalView}
         // AuthModal itself will need dark mode styling internally or via its own components
       />
-
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
@@ -223,7 +221,7 @@ export default function Home() {
                 <div className="text-sm text-gray-600 dark:text-gray-400">Challenges Done</div>
               </div>
               <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
-                <div className="text-2xl font-bold text-accent">{stats?.accuracy || 0}%</div>
+                <div className="text-2xl font-bold text-[#9797cf]">{stats?.accuracy || 0}%</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Accuracy</div>
               </div>
               <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
@@ -251,12 +249,11 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cultures?.map((culture) => (
               // CultureCard will need its own internal dark mode styling
-              <CultureCard key={culture.id} culture={culture} />
+              (<CultureCard key={culture.id} culture={culture} />)
             ))}
           </div>
         </div>
       </main>
-
       {/* Footer */}
       <footer className="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
