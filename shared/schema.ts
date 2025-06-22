@@ -60,6 +60,18 @@ export const gameStats = pgTable("game_stats", {
   streak: integer("streak").notNull().default(0),
 });
 
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  emailVerificationCode: text("email_verification_code"),
+  displayName: text("display_name"),
+  avatarUrl: text("avatar_url"),
+  createdAt: text("created_at").notNull().default(() => new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(() => new Date().toISOString()),
+});
+
 export const insertCultureSchema = createInsertSchema(cultures).omit({
   id: true,
 });
@@ -84,12 +96,19 @@ export const insertGameStatsSchema = createInsertSchema(gameStats).omit({
   id: true,
 });
 
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type Culture = typeof cultures.$inferSelect;
 export type Question = typeof questions.$inferSelect;
 export type UserProgress = typeof userProgress.$inferSelect;
 export type Achievement = typeof achievements.$inferSelect;
 export type UserAchievement = typeof userAchievements.$inferSelect;
 export type GameStats = typeof gameStats.$inferSelect;
+export type User = typeof users.$inferSelect;
 
 export type InsertCulture = z.infer<typeof insertCultureSchema>;
 export type InsertQuestion = z.infer<typeof insertQuestionSchema>;
@@ -97,6 +116,7 @@ export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
 export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
 export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
 export type InsertGameStats = z.infer<typeof insertGameStatsSchema>;
+export type InsertUser = z.infer<typeof insertUserSchema>;
 
 // Quiz session types
 export type QuizSession = {

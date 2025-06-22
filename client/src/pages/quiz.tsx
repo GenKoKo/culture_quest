@@ -104,10 +104,10 @@ export default function Quiz() {
 
   if (isLoading || !quizData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="animate-pulse">
-          <div className="h-8 w-64 bg-gray-300 rounded mb-4"></div>
-          <div className="h-4 w-48 bg-gray-300 rounded"></div>
+          <div className="h-8 w-64 bg-gray-300 dark:bg-slate-700 rounded mb-4"></div>
+          <div className="h-4 w-48 bg-gray-300 dark:bg-slate-700 rounded"></div>
         </div>
       </div>
     );
@@ -170,26 +170,26 @@ export default function Quiz() {
 
   if (showResult && quizResult) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
+        <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-slate-700">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-3">
-                <Button variant="ghost" size="sm" onClick={handleGoBack}>
+                <Button variant="ghost" size="sm" onClick={handleGoBack} className="dark:text-gray-300 dark:hover:bg-slate-700">
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     {quizData.culture.flag} {quizData.culture.name} Culture
                   </h3>
-                  <p className="text-sm text-gray-600">Quiz Results</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Quiz Results</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2 bg-accent/10 px-3 py-1.5 rounded-full">
-                  <Star className="text-accent w-4 h-4" />
+                <div className="flex items-center space-x-2 bg-accent/10 dark:bg-accent/20 px-3 py-1.5 rounded-full">
+                  <Star className="text-accent w-4 h-4" /> {/* Accent color should be theme aware */}
                   <span className="font-semibold text-accent">{quizResult.totalScore}</span>
                 </div>
               </div>
@@ -199,49 +199,49 @@ export default function Quiz() {
 
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Results Summary */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-6 text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Quiz Complete!</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-8 mb-6 text-center">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Quiz Complete!</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-primary/5 p-4 rounded-xl">
+              <div className="bg-primary/5 dark:bg-primary/10 p-4 rounded-xl">
                 <div className="text-2xl font-bold text-primary">{quizResult.totalScore}</div>
-                <div className="text-sm text-gray-600">Total Score</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Total Score</div>
               </div>
-              <div className="bg-secondary/5 p-4 rounded-xl">
+              <div className="bg-secondary/5 dark:bg-secondary/10 p-4 rounded-xl">
                 <div className="text-2xl font-bold text-secondary">{quizResult.correctAnswers}/{quizResult.totalQuestions}</div>
-                <div className="text-sm text-gray-600">Correct</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Correct</div>
               </div>
-              <div className="bg-accent/5 p-4 rounded-xl">
+              <div className="bg-accent/5 dark:bg-accent/10 p-4 rounded-xl">
                 <div className="text-2xl font-bold text-accent">{quizResult.accuracy}%</div>
-                <div className="text-sm text-gray-600">Accuracy</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Accuracy</div>
               </div>
-              <div className="bg-cultural-purple/5 p-4 rounded-xl">
+              <div className="bg-cultural-purple/5 dark:bg-cultural-purple/10 p-4 rounded-xl"> {/* Assuming cultural-purple is fine on dark */}
                 <div className="text-2xl font-bold text-cultural-purple">{Math.round(quizResult.timeSpent / 60)}m</div>
-                <div className="text-sm text-gray-600">Time</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Time</div>
               </div>
             </div>
             
             <div className="flex justify-center space-x-4">
-              <Button onClick={handleRestartQuiz}>Try Again</Button>
-              <Button variant="outline" onClick={handleGoBack}>Back to Home</Button>
+              <Button onClick={handleRestartQuiz} className="dark:bg-primary dark:hover:bg-primary/90">Try Again</Button>
+              <Button variant="outline" onClick={handleGoBack} className="dark:text-white dark:border-slate-600 dark:hover:bg-slate-700">Back to Home</Button>
             </div>
           </div>
 
           {/* Detailed Results */}
           <div className="space-y-6">
             {quizResult.detailedAnswers.map((answer, index) => (
-              <div key={answer.questionId} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <div key={answer.questionId} className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <h4 className="text-lg font-semibold text-gray-900">Question {index + 1}</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Question {index + 1}</h4>
                   <div className={`px-3 py-1 rounded-full text-sm font-medium ${
                     answer.isCorrect 
-                      ? "bg-green-100 text-green-800" 
-                      : "bg-red-100 text-red-800"
+                      ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300"
+                      : "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300"
                   }`}>
                     {answer.isCorrect ? "Correct" : "Incorrect"}
                   </div>
                 </div>
                 
-                <p className="text-gray-900 mb-4">{answer.question}</p>
+                <p className="text-gray-900 dark:text-gray-100 mb-4">{answer.question}</p>
                 
                 {answer.imageUrl && (
                   <img 
@@ -253,27 +253,27 @@ export default function Quiz() {
                 
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Your Answer:</span>
-                    <span className={answer.isCorrect ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                    <span className="text-gray-600 dark:text-gray-400">Your Answer:</span>
+                    <span className={`${answer.isCorrect ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"} font-medium`}>
                       {answer.userAnswer}
                     </span>
                   </div>
                   {!answer.isCorrect && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Correct Answer:</span>
-                      <span className="text-green-600 font-medium">{answer.correctAnswer}</span>
+                      <span className="text-gray-600 dark:text-gray-400">Correct Answer:</span>
+                      <span className="text-green-600 dark:text-green-400 font-medium">{answer.correctAnswer}</span>
                     </div>
                   )}
                 </div>
                 
-                <div className="bg-secondary/5 border border-secondary/20 rounded-xl p-4">
+                <div className="bg-secondary/5 dark:bg-secondary/10 border border-secondary/20 dark:border-secondary/30 rounded-xl p-4">
                   <div className="flex items-start space-x-3">
                     <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-white text-sm">💡</span>
+                      <span className="text-white text-sm">💡</span> {/* Icon might need dark mode adjustment if not visible */}
                     </div>
                     <div>
-                      <h5 className="font-semibold text-secondary mb-2">Cultural Insight</h5>
-                      <p className="text-gray-700">{answer.culturalFact}</p>
+                      <h5 className="font-semibold text-secondary mb-2">Cultural Insight</h5> {/* Secondary color should be theme aware */}
+                      <p className="text-gray-700 dark:text-gray-300">{answer.culturalFact}</p>
                     </div>
                   </div>
                 </div>
@@ -286,6 +286,7 @@ export default function Quiz() {
           <AchievementModal
             achievement={quizResult.newAchievements[0]}
             onClose={() => setShowAchievement(false)}
+            // AchievementModal needs internal dark mode styling
           />
         )}
       </div>
@@ -293,31 +294,31 @@ export default function Quiz() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-slate-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="sm" onClick={handleGoBack}>
+              <Button variant="ghost" size="sm" onClick={handleGoBack} className="dark:text-gray-300 dark:hover:bg-slate-700">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   {quizData.culture.flag} {quizData.culture.name} Culture
                 </h3>
-                <p className="text-sm text-gray-600">Cultural Challenge</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Cultural Challenge</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 bg-accent/10 px-3 py-1.5 rounded-full">
-                <Star className="text-accent w-4 h-4" />
+              <div className="flex items-center space-x-2 bg-accent/10 dark:bg-accent/20 px-3 py-1.5 rounded-full">
+                <Star className="text-accent w-4 h-4" /> {/* Accent color should be theme aware */}
                 <span className="font-semibold text-accent">{score}</span>
               </div>
               
-              <div className="flex items-center space-x-2 bg-primary/10 px-3 py-1.5 rounded-full">
-                <Clock className="text-primary w-4 h-4" />
+              <div className="flex items-center space-x-2 bg-primary/10 dark:bg-primary/20 px-3 py-1.5 rounded-full">
+                <Clock className="text-primary w-4 h-4" /> {/* Primary color should be theme aware */}
                 <span className="font-semibold text-primary">
                   {Math.floor((Date.now() - quizStartTime) / 60000)}:
                   {String(Math.floor(((Date.now() - quizStartTime) % 60000) / 1000)).padStart(2, '0')}
@@ -329,20 +330,22 @@ export default function Quiz() {
       </header>
 
       {/* Progress Bar */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
               Question {currentQuestionIndex + 1} of {quizData.questions.length}
             </span>
-            <span className="text-sm text-gray-600">{Math.round(progress)}% Complete</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">{Math.round(progress)}% Complete</span>
           </div>
+          {/* Progress component should handle its own dark theming */}
           <Progress value={progress} className="w-full" />
         </div>
       </div>
 
       {/* Quiz Interface */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* QuizInterface component needs internal dark mode styling */}
         <QuizInterface
           question={currentQuestion}
           selectedAnswer={selectedAnswer}
