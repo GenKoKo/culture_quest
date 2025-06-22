@@ -104,7 +104,7 @@ export class MemStorage implements IStorage {
         name: "Egyptian",
         country: "Egypt",
         flag: "🇪🇬",
-        imageUrl: "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400",
+        imageUrl: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400",
         description: "Uncover ancient history, pharaohs, pyramids, and modern Egypt",
         totalQuestions: 8,
         estimatedTime: 20
@@ -131,7 +131,12 @@ export class MemStorage implements IStorage {
 
     culturesData.forEach(culture => {
       const id = this.currentId++;
-      this.cultures.set(id, { id, ...culture });
+      this.cultures.set(id, { 
+        id, 
+        ...culture,
+        totalQuestions: culture.totalQuestions || 8,
+        estimatedTime: culture.estimatedTime || 15
+      });
     });
 
     // Initialize user progress
@@ -303,7 +308,12 @@ export class MemStorage implements IStorage {
 
     questionsData.forEach(question => {
       const id = this.currentId++;
-      this.questions.set(id, { id, ...question });
+      this.questions.set(id, { 
+        id, 
+        ...question,
+        imageUrl: question.imageUrl || null,
+        difficulty: question.difficulty || 1
+      });
     });
   }
 
@@ -362,7 +372,12 @@ export class MemStorage implements IStorage {
 
   async createCulture(culture: InsertCulture): Promise<Culture> {
     const id = this.currentId++;
-    const newCulture: Culture = { id, ...culture };
+    const newCulture: Culture = { 
+      id, 
+      ...culture,
+      totalQuestions: culture.totalQuestions || 8,
+      estimatedTime: culture.estimatedTime || 15
+    };
     this.cultures.set(id, newCulture);
     return newCulture;
   }
@@ -379,7 +394,12 @@ export class MemStorage implements IStorage {
 
   async createQuestion(question: InsertQuestion): Promise<Question> {
     const id = this.currentId++;
-    const newQuestion: Question = { id, ...question };
+    const newQuestion: Question = { 
+      id, 
+      ...question,
+      imageUrl: question.imageUrl || null,
+      difficulty: question.difficulty || 1
+    };
     this.questions.set(id, newQuestion);
     return newQuestion;
   }
@@ -432,7 +452,7 @@ export class MemStorage implements IStorage {
     const newAchievements: Achievement[] = [];
     const unlockedAchievementIds = new Set(Array.from(this.userAchievements.values()).map(ua => ua.achievementId));
 
-    for (const achievement of this.achievements.values()) {
+    for (const achievement of Array.from(this.achievements.values())) {
       if (unlockedAchievementIds.has(achievement.id)) continue;
 
       let shouldUnlock = false;
