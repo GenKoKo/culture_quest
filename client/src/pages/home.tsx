@@ -217,7 +217,7 @@ export default function Home() {
                 <div className="text-sm text-gray-600 dark:text-gray-400">Cultures Explored</div>
               </div>
               <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
-                <div className="text-2xl font-bold text-secondary">{stats?.challengesCompleted || 0}</div>
+                <div className="text-2xl font-bold text-[#9696d9]">{stats?.challengesCompleted || 0}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Challenges Done</div>
               </div>
               <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
